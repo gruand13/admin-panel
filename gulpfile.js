@@ -1,16 +1,17 @@
-const gulp = require("gulp");
-const webpack = require("webpack-stream");
+const gulp = require('gulp');
 const sass = require("gulp-sass")(require('sass'));
+const webpack = require("webpack-stream");
 
-const dist = "path_to_admin";
-// Здесь должен быть путь к папке admin в вашем проекте на локальном сервере
 
-gulp.task("copy-html", () => {
+const dist = "/Applications/MAMP/htdocs/admin-panel/admin";
+
+
+gulp.task('copy-html', ()=>{
     return gulp.src("./app/src/index.html")
-                .pipe(gulp.dest(dist));
+                .pipe(gulp.dest(dist))
 });
 
-gulp.task("build-js", () => {
+gulp.task("build-js", ()=>{
     return gulp.src("./app/src/main.js")
                 .pipe(webpack({
                     mode: 'development',
@@ -39,9 +40,8 @@ gulp.task("build-js", () => {
                         ]
                       }
                 }))
-                .pipe(gulp.dest(dist));
+                .pipe(gulp.dest(dist))
 });
-
 gulp.task("build-sass", () => {
     return gulp.src("./app/scss/style.scss")
                 .pipe(sass().on('error', sass.logError))

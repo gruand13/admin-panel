@@ -13117,12 +13117,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-jquery__WEBPACK_IMPORTED_MODULE_3___default().get("./api", function (data) {
+jquery__WEBPACK_IMPORTED_MODULE_3___default().get("../api", function (data) {
   data.forEach(function (file) {
     jquery__WEBPACK_IMPORTED_MODULE_3___default()("body").append("<h1>".concat(file, "</h1>"));
   });
-  console.log('hello');
 }, "JSON");
+jquery__WEBPACK_IMPORTED_MODULE_3___default()("button").click(function () {
+  jquery__WEBPACK_IMPORTED_MODULE_3___default().post("./api/createNewpage.php", {
+    "name": jquery__WEBPACK_IMPORTED_MODULE_3___default()("input").val()
+  }), function (data) {
+    console.log(data);
+  };
+});
 })();
 
 /******/ })()
