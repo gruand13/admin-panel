@@ -1,13 +1,27 @@
 import $ from "jquery";
 
+function getPageList(){
+    $("h1").remove();
+    $.get("./api", data=>{
+        data.forEach(file =>{
+            $("body").append(`<h1>${file}</h1>`)
+        })
+    
+    }, "JSON")
+}
 
-$.get("./api", data=>{
-    data.forEach(file =>{
-        $("body").append(`<h1>${file}</h1>`)
+getPageList();
+
+
+$("button").click(()=>{
+    $.post("./api/createNewPage.php", {
+        "name": $('input').val()
+    }, ()=>{
+        getPageList();
+
     })
-
-}, "JSON")
-
-
-
+    .fail(()=>{
+        alert("Page already exist");
+    })
+})
 
