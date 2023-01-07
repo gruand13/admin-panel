@@ -24,16 +24,38 @@ export default class Editor extends Component{
 
     createNewPage(){
         axios
-            .post("./api/createNewPage.php", {'name': this.state.newPageName})
+            .post("./api/createNewPage.php", {"name": this.state.newPageName})
             .then(this.loadPageList())
             .catch(() => alert("Page already exist"));
+
+            
     }
+
+
+
+    deletePage(page){
+        axios
+            .post("./api/deletePage.php", {"name": page})
+            .then(this.loadPageList())
+            .catch(() => alert("Page does not exist"));
+
+        // console.log(page);
+
+
+    }
+
+
+
 
     render(){
         const {pageList} = this.state;
         const pages = pageList.map((page,i) =>{
             return(
-                <h1 key={i}>{page}</h1>
+                <h1 key={i}>{page}
+                    <a 
+                    href="#"
+                    onClick={()=> this.deletePage(page)}>(x)</a>
+                </h1>
             )
         })
         return (
@@ -42,6 +64,8 @@ export default class Editor extends Component{
                 onChange={(e)=>{this.setState({newPageName: e.target.value})}} 
                 type="text"/>
                 <button onClick={this.createNewPage}>Create page</button>
+                
+
                 {pages}
             </>
         )

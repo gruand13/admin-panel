@@ -6,10 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gruand13/admin-panel.git"
-  },
   "author": "",
   "license": "ISC",
   "browsersList": [
@@ -17,10 +13,6 @@
     "last 2 firefox versions",
     "last 2 ios versions"
   ],
-  "bugs": {
-    "url": "https://github.com/gruand13/admin-panel/issues"
-  },
-  "homepage": "https://github.com/gruand13/admin-panel#readme",
   "dependencies": {
     "axios": "^1.2.2",
     "core-js": "^3.26.1",
@@ -39,8 +31,5 @@
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-stream": "^7.0.0"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.10"
   }
 }
