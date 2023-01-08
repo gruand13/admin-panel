@@ -178,6 +178,8 @@ import DOMHelper from '../../helpers/dom-helper';
 import EditorText from "../editor-text/";
 import UIkit from "uikit";
 import Spinner from "../spinner";
+import ConfirmModal from "../confirm-modal";
+import ChooseModal from "../choose-modal/choose-modal.js";
 
 
 
@@ -193,14 +195,22 @@ export default class Editor extends Component {
         this.createNewPage = this.createNewPage.bind(this);
         this.isLoading = this.isLoading.bind(this);
         this.isLoaded = this.isLoaded.bind(this);
+        this.save = this.save.bind(this);
+        this.init = this.init.bind(this);
+
+
 
     }
 
     componentDidMount() {
-        this.init(this.currentPage);
+        this.init(null, this.currentPage);
     }
 
-    init(page) {
+    init(e, page) {
+        if(e){
+            e.preventDefault();
+        }
+        this.isLoading();
         this.iframe = document.querySelector('iframe');
         this.open(page, this.isLoaded);
         this.loadPageList();
@@ -219,7 +229,8 @@ export default class Editor extends Component {
             })
             .then(DOMHelper.serializeDOMToString)
             .then(html => axios.post("./api/saveTempPage.php", {html}))
-            .then(() => this.iframe.load("../temp.html"))
+            .then(() => this.iframe.load("../dfsgh132fd.html"))
+            .then(()=> axios.post("./api/deleteTempPage.php"))
             .then(() => this.enableEditing())
             .then(()=> this.injectStyles())
             .then(cb);
@@ -266,7 +277,7 @@ export default class Editor extends Component {
 
     loadPageList() {
         axios
-            .get("./api")
+            .get("./api/pageList.php")
             .then(res => this.setState({pageList: res.data}))
     }
 
@@ -295,7 +306,7 @@ export default class Editor extends Component {
     }
 
     render() {
-        const {loading} = this.state;
+        const {loading, pageList} = this.state;
         const modal= true;
         let spinner;
 
@@ -306,35 +317,15 @@ export default class Editor extends Component {
                 <iframe src={this.currentPage} frameBorder="0"></iframe>
                 {spinner}
                 <div className="panel">
+                    <button className="uk-button uk-button-primary uk-margin-small-right" uk-toggle="target: #modal-open">Open</button>
                     <button className="uk-button uk-button-primary" uk-toggle="target: #modal-save">Publish</button>
 
-                </div>
-                
 
-                <div id="modal-save" uk-modal={modal.toString()} container="false">
-                    <div className="uk-modal-dialog">
-                       
-                        <div className="uk-modal-header">
-                            <h2 className="uk-modal-title">saving...</h2>
-                        </div>
-                        <div className="uk-modal-body">
-                            <p>Do you really want to save changes?</p>
-                        </div>
-                        <div className="uk-modal-footer uk-text-right">
-                            <button className="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                            <button 
-                                className="uk-button uk-button-primary uk-modal-close" 
-                                type="button"
-                                onClick={()=> this.save(()=>{
-                                    UIkit.notification({message: 'Successfully saved', status: "success" })
-                                },
-                                ()=>{
-                                    UIkit.notification({message: 'Error with saving', status: "danger" })
-                                }
-                                )}>Publish</button>
-                        </div>
-                    </div>
                 </div>
+                <ConfirmModal modal={modal} target={'modal-save'} method={this.save}/>
+                <ChooseModal modal={modal} target={'modal-open'}  data={pageList} redirect={this.init}/>
+
+                
             </>
             
            
