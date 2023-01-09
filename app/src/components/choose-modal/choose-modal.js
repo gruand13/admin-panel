@@ -1,16 +1,32 @@
 import React from "react";
 
 const ChooseModal = ({modal, target, data, redirect})=>{
-    const pageList= data.map(item=>{
-        return (
-            <li key={item}>
-                <a 
-                className="uk-link-muted uk-modal-close" 
-                href='#'
-                onClick={(e) => redirect(e, item)}>{item}</a>
-            </li>
-        )
-    })
+    const list= data.map(item=>{
+        if(item.time){
+            return (
+                <li key={item.file}>
+                    <a 
+                    className="uk-link-muted uk-modal-close" 
+                    href='#'
+                    onClick={(e) => redirect(e, item.file)}>Backup copy: {item.time}</a>
+                </li>
+            )
+        } else {
+            return (
+                <li key={item}>
+                    <a 
+                    className="uk-link-muted uk-modal-close" 
+                    href='#'
+                    onClick={(e) => redirect(e, item)}>{item}</a>
+                </li>
+            )
+        }
+        
+    });
+    let msg;
+    if(data.length <1){
+        msg = <div>Backup copy does not found</div>
+    }
 
     return (
         <div id={target} uk-modal={modal.toString()} container="false">
@@ -18,10 +34,11 @@ const ChooseModal = ({modal, target, data, redirect})=>{
                 
                 <div className="uk-modal-header">
                     <h2 className="uk-modal-title">OPEN</h2>
+                    {msg};
                 </div>
                 <div className="uk-modal-body">
                     <ul className="uk-list uk-list-divider">
-                        {pageList}
+                        {list}
                     </ul>
                 </div>
                 
