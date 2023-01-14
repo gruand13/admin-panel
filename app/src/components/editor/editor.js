@@ -76,7 +76,7 @@ export default class Editor extends Component {
 
     }
 
-    async save(onSuccess, onError) {
+    async save() {
         this.isLoading();
         const newDom = this.virtualDom.cloneNode(this.virtualDom);
         DOMHelper.unwrapTextNodes(newDom);
@@ -84,8 +84,8 @@ export default class Editor extends Component {
         const html = DOMHelper.serializeDOMToString(newDom);
         await axios
             .post("./api/savePage.php", {pageName: this.currentPage, html})
-            .then(onSuccess)
-            .catch(onError)
+            .then(()=> this.showNotifications('Successfully saved','success'))
+            .catch(()=> this.showNotifications('Error with saving','danger' ))
             .finally(this.isLoaded);
 
         this.loadBackupsList();
@@ -104,7 +104,7 @@ export default class Editor extends Component {
             const id = element.getAttribute("editableimgid");
             const virtualElement = this.virtualDom.body.querySelector(`[editableimgid="${id}"]`);
 
-            new EditorImages(element, virtualElement)
+            new EditorImages(element, virtualElement, this.isLoading, this.isLoaded, this.showNotifications)
         });
     }
     injectStyles(){
@@ -126,7 +126,9 @@ export default class Editor extends Component {
         this.iframe.contentDocument.head.appendChild(style);
         
     }
-
+    showNotifications(message, status){
+        UIkit.notification({message, status});
+    }
 
  
 
