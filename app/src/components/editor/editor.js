@@ -25,7 +25,9 @@ export default class Editor extends Component {
             backupsList: [],
             newPageName: "",
             loading: true,
-            auth: false
+            auth: false,
+            loginError: false,
+            loginLengthError: false
         }
         // this.createNewPage = this.createNewPage.bind(this);
         this.isLoading = this.isLoading.bind(this);
@@ -33,6 +35,7 @@ export default class Editor extends Component {
         this.save = this.save.bind(this);
         this.init = this.init.bind(this);
         this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
 
         this.restoreBackup = this.restoreBackup.bind(this);
 
@@ -55,7 +58,7 @@ export default class Editor extends Component {
         axios   
             .get("./api/checkAuth.php")
             .then(res=>{
-                console.log(res.data);
+                
                 this.setState({
                     auth: res.data.auth
                 })
@@ -69,10 +72,24 @@ export default class Editor extends Component {
                 .post('./api/login.php', {"password": pass})
                 .then(res =>{
                     this.setState({
-                        auth: res.data.auth
+                        auth: res.data.auth,
+                        loginError: !res.data.auth,
+                        loginLengthError: false
                     })
                 })
+        } else {
+            this.setState({
+                loginError: false,
+                loginLengthError: true
+            })
         }
+    }
+    logout(){
+        axios
+            .get("./api/logout.php")
+            .then(()=>{
+                window.location.replace("/");
+            })
     }
 
 
@@ -227,7 +244,7 @@ export default class Editor extends Component {
     }
 
     render() {
-        const {loading, pageList, backupsList, auth} = this.state;
+        const {loading, pageList, backupsList, auth, loginError, loginLengthError} = this.state;
         const modal= true;
         let spinner;
 
@@ -236,7 +253,7 @@ export default class Editor extends Component {
         loading ? spinner = <Spinner active/> : <Spinner />
 
         if (!auth){
-            return  <Login login={this.login}/>
+            return  <Login login={this.login} lengthErr={loginLengthError} logErr={loginError}/>
         }
 
         return (
@@ -247,9 +264,34 @@ export default class Editor extends Component {
                 {spinner}
                 <Panel />
 
-                <ConfirmModal modal={modal} target={'modal-save'} method={this.save}/>
-                <ChooseModal modal={modal} target={'modal-open'}  data={pageList} redirect={this.init}/>
-                <ChooseModal modal={modal} target={'modal-backup'}  data={backupsList} redirect={this.restoreBackup}/>
+                <ConfirmModal 
+                    modal={modal} 
+                    target={'modal-save'} 
+                    method={this.save}
+                    text={{
+                        title: "Saving",
+                        descr: "Do you really want to save changes?",
+                        btn: "Publish"
+                    }}/>
+                    <ConfirmModal 
+                    modal={modal} 
+                    target={'modal-logout'} 
+                    method={this.logout}
+                    text={{
+                        title: "Exit",
+                        descr: "Do you really want to exit?",
+                        btn: "LOG OUT"
+                    }}/>
+                <ChooseModal 
+                    modal={modal} 
+                    target={'modal-open'}  
+                    data={pageList} 
+                    redirect={this.init}/>
+                <ChooseModal 
+                    modal={modal} 
+                    target={'modal-backup'}  
+                    data={backupsList} 
+                    redirect={this.restoreBackup}/>
                 {this.virtualDom ? <EditorMeta modal={modal} target= {'modal-meta'} virtualDom={this.virtualDom}/> : false}
 
 
