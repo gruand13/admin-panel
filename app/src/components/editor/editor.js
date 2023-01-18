@@ -17,32 +17,31 @@ import Login from "../login";
 
 
 export default class Editor extends Component {
-    constructor() {
-        super();
-        this.currentPage = "index.html";
-        this.state = {
-            pageList: [],
-            backupsList: [],
-            newPageName: "",
-            loading: true,
-            auth: false,
-            loginError: false,
-            loginLengthError: false
-        }
-        // this.createNewPage = this.createNewPage.bind(this);
-        this.isLoading = this.isLoading.bind(this);
-        this.isLoaded = this.isLoaded.bind(this);
-        this.save = this.save.bind(this);
-        this.init = this.init.bind(this);
-        this.login = this.login.bind(this);
-        this.logout = this.logout.bind(this);
-
-        this.restoreBackup = this.restoreBackup.bind(this);
-
-
-
-
+   
+    currentPage = "index.html";
+    state = {
+        pageList: [],
+        backupsList: [],
+        newPageName: "",
+        loading: true,
+        auth: false,
+        loginError: false,
+        loginLengthError: false
     }
+        // this.createNewPage = this.createNewPage.bind(this);
+        // this.isLoading = this.isLoading.bind(this);
+        // this.isLoaded = this.isLoaded.bind(this);
+        // this.save = this.save.bind(this);
+        // this.init = this.init.bind(this);
+        // this.login = this.login.bind(this);
+        // this.logout = this.logout.bind(this);
+
+        // this.restoreBackup = this.restoreBackup.bind(this);
+
+
+
+
+    
 
     componentDidMount() {
         this.checkAuth();
@@ -54,11 +53,11 @@ export default class Editor extends Component {
         }
     }
 
-    checkAuth(){
+    checkAuth = ()=> {
         axios   
             .get("./api/checkAuth.php")
             .then(res=>{
-                
+                console.log(res);
                 this.setState({
                     auth: res.data.auth
                 })
@@ -66,7 +65,7 @@ export default class Editor extends Component {
     }
 
 
-    login(pass){
+    login = (pass) =>{
         if(pass.length >5){
             axios
                 .post('./api/login.php', {"password": pass})
@@ -93,7 +92,7 @@ export default class Editor extends Component {
     }
 
 
-    init(e, page) {
+    init = (e, page) => {
         if(e){
             e.preventDefault();
         }
@@ -108,7 +107,7 @@ export default class Editor extends Component {
         
     }
 
-    open(page, cb) {
+    open = (page, cb) => {
         this.currentPage = page;
 
         axios
@@ -132,7 +131,7 @@ export default class Editor extends Component {
 
     }
 
-    async save() {
+    save = async () =>{
         this.isLoading();
         const newDom = this.virtualDom.cloneNode(this.virtualDom);
         DOMHelper.unwrapTextNodes(newDom);
@@ -148,7 +147,7 @@ export default class Editor extends Component {
         
     }
 
-    enableEditing() {
+    enableEditing=()=> {
         this.iframe.contentDocument.body.querySelectorAll("text-editor").forEach(element => {
             const id = element.getAttribute("nodeid");
             const virtualElement = this.virtualDom.body.querySelector(`[nodeid="${id}"]`);
@@ -163,7 +162,7 @@ export default class Editor extends Component {
             new EditorImages(element, virtualElement, this.isLoading, this.isLoaded, this.showNotifications)
         });
     }
-    injectStyles(){
+    injectStyles=()=>{
         const style = this.iframe.contentDocument.createElement("style");
         style.innerHTML=`
             text-editor:hover {
@@ -182,19 +181,19 @@ export default class Editor extends Component {
         this.iframe.contentDocument.head.appendChild(style);
         
     }
-    showNotifications(message, status){
+    showNotifications=(message, status)=>{
         UIkit.notification({message, status});
     }
 
  
 
-    loadPageList() {
+    loadPageList =() =>{
         axios
             .get("./api/pageList.php")
             .then(res => this.setState({pageList: res.data}))
     }
 
-    loadBackupsList(){
+    loadBackupsList=()=>{
         axios
             .get("./backups/backups.json")
             .then(res=> this.setState({backupsList: res.data.filter(backup=> {
@@ -203,7 +202,7 @@ export default class Editor extends Component {
         }))
     }
 
-    restoreBackup(e, backup){
+    restoreBackup=(e, backup)=>{
         if(e){
             e.preventDefault();
         }
@@ -232,12 +231,12 @@ export default class Editor extends Component {
     //         .then(this.loadPageList())
     //         .catch(() => alert("Страницы не существует!"));
     // }
-    isLoading(){
+    isLoading=()=>{
         this.setState({
             loading: true
         })
     }
-    isLoaded(){
+    isLoaded=()=>{
         this.setState({
             loading: false
         })
